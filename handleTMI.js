@@ -20,6 +20,8 @@ const handleTMI = (client) => {
     handleChatCommands(channel, userstate, message, self);
   });
 
+  
+
   function handleChatJoins(channel, username, self) {
 
     let data = {
@@ -133,7 +135,7 @@ const handleTMI = (client) => {
       currentGameDesc = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameDescription;
       currentGameLink = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameLink;
     }
-    
+
     if (currentGamePrice || currentGamePrice === 0) {
       setTimeout(function(){
         client.action(data.channel, lang.handleChatCommands.currentGameFunction[1] + currentGame);

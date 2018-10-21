@@ -10,7 +10,6 @@ let viewersInfoObj,
   followCheck,
   //last time function was used "date"
   lastTime = {},
-  dateStamp = Date.now(),
   //if writeToDB is "true" - database file will be updated
   writeToDB = true,
 steamArrayOfAppIDs = [];
@@ -45,9 +44,11 @@ let apiCall = (url, path) => {
       data: error
     };
 
+    // console.log(errorResponse);
     return errorResponse;
   });
 };
+
 
 
 const apiCallCase = {
@@ -324,7 +325,8 @@ async function followsFunction(data) {
   if (followsFunctionResponse.type === "error") {
     followsBool = false;
   } else if (followsFunctionResponse.type === "success") {
-    followDate = followsFunctionResponse.data.created_at.split(/T|Z/g, 2);
+    followDate = followsFunctionResponse.data.created_at;
+    // followDate = followsFunctionResponse.data.created_at.split(/T|Z/g, 2);
     followsBool = true;
   }
 
@@ -341,12 +343,13 @@ async function followsFunction(data) {
   let followAgeInDays = 0;
   if (followsBool) {
     // days past since user followed the stream
-    followAgeInDays = Math.floor((dateStamp - Date.parse(followDate[0]))/86400000);
+    followAgeInDays = Math.floor((Date.now() - Date.parse(followDate))/86400000);
   }
 
   tempDB[data.channel].viewers[data.username] = {
     name: data.username,
     follows: followsBool,
+    lastSeen: new Date(),
     followDate: followDate,
     followAgeInDays: followAgeInDays
   };
