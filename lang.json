@@ -1,0 +1,44 @@
+{
+  "ru": {
+    "thinkingResponse": " imGlitch Секунду, обрабатываю информацию.",
+    "handleChatCommands": {
+      "whysolongFunction": " imGlitch Я \"Так Долго\" отвечаю на комманды, поскольку не хочу схлопотать кулдаун на сообщения. Я обычный пользователь чата как и Вы, а не Бот с привилегиями.",
+      "whoFunction": " imGlitch Все зрители являются фолловерами данного стрима SeemsGood ",
+      "viewersInfoFunction": {
+        "1": " imGlitch Факты о стриме!",
+        "2": " imGlitch Пользователей в чате: ",
+        "3": " из них не фолловят стрим!",
+        "4": " imGlitch Напиши !who, чтобы увидеть кто еще не вмазал с вертухи по кнопке \"отслеживать\" :) ",
+        "5": " imGlitch Все зрители фолловят этот стрим! \\ PogChamp / "
+      },
+      "currentGameFunction": {
+        "1": " imGlitch Текущая игра: ",
+        "2": " imGlitch Цена: ",
+        "3": "руб. ",
+        "4": " imGlitch Краткое описание: ",
+        "5": " imGlitch Ссылка в Стим: "
+      }
+    }
+  },
+  "en": {
+    "thinkingResponse": " imGlitch Thinking, give me a second.",
+    "handleChatCommands": {
+      "whysolongFunction": " imGlitch I'm not responding \"As Fast\" because I don't want to trigger cooldown on my messages, since I'm just a regular chatter, not a Bot with cooldown benefits.",
+      "whoFunction": " imGlitch Seems like all viewers follow the stream SeemsGood ",
+      "viewersInfoFunction": {
+        "1": " imGlitch Stream Facts!",
+        "2": " imGlitch Amount of Chatters: ",
+        "3": " of Them Not Following The Stream!",
+        "4": " imGlitch Type !who to See Who Hasn't Smashed The Follow Button Yet :) ",
+        "5": " imGlitch All viewers follow the stream! \\ PogChamp / "
+      },
+      "currentGameFunction": {
+        "1": " imGlitch Current game is: ",
+        "2": " imGlitch Price: ",
+        "3": "$ ",
+        "4": " imGlitch Short description: ",
+        "5": " imGlitch Steam link: "
+      }
+    }
+  }
+}
