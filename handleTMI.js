@@ -132,13 +132,17 @@ const handleTMI = (client) => {
       currentGamePrice = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gamePrice;
       currentGameDesc = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameDescription;
       currentGameLink = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameLink;
-      console.log(currentGamePrice);
     }
+    
     if (currentGamePrice || currentGamePrice === 0) {
       setTimeout(function(){
         client.action(data.channel, lang.handleChatCommands.currentGameFunction[1] + currentGame);
         setTimeout(function(){
-          client.action(data.channel, lang.handleChatCommands.currentGameFunction[2] + currentGamePrice + lang.handleChatCommands.currentGameFunction[3]);
+          if (typeof currentGamePrice === "string") {
+            client.action(data.channel, lang.handleChatCommands.currentGameFunction[2] + currentGamePrice);
+          } else {
+            client.action(data.channel, lang.handleChatCommands.currentGameFunction[2] + currentGamePrice + lang.handleChatCommands.currentGameFunction[3]);
+          }
           setTimeout(function(){
             client.action(data.channel, lang.handleChatCommands.currentGameFunction[4] + currentGameDesc);
             setTimeout(function(){

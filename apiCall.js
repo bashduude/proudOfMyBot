@@ -12,7 +12,9 @@ let viewersInfoObj,
   lastTime = {},
   dateStamp = Date.now(),
   //if writeToDB is "true" - database file will be updated
-  writeToDB = true;
+  writeToDB = true,
+steamArrayOfAppIDs = [];
+
 
 let apiCall = (url, path) => {
   return axios({
@@ -160,6 +162,14 @@ let handleCalls = async (what, data) => {
 
 };
 
+async function listOfAppIDsFuncion() {
+
+  url = apiCallCase.request.steamAPI.urls.listOfAppIDs;
+  let listOfAppIDsResponse = await apiCall(url);
+  steamArrayOfAppIDs = listOfAppIDsResponse.data.applist.apps.app;
+  console.log("CALL FOR listOfAppID's IS DONE");
+}
+
 async function streamInfoFunction(data) {
 
   if (!(ifTimePassedFunction(60, "streamInfo", data))) {
@@ -212,11 +222,7 @@ async function streamInfoFunction(data) {
 async function currentGameFunction(data) {
 
   await streamInfoFunction(data);
-    
-  url = apiCallCase.request.steamAPI.urls.listOfAppIDs;
-
-  let listOfAppIDsResponse = await apiCall(url);
-  let array = listOfAppIDsResponse.data.applist.apps.app;
+  
   let stringtosearchfor = tempDB[data.channel].streamInfo.game.toLowerCase();
   console.log(stringtosearchfor);
   if (stringtosearchfor === "irl" || stringtosearchfor === "programming") {
@@ -224,14 +230,19 @@ async function currentGameFunction(data) {
     return;
   }
 
-  let currentGame = array.find(i => i.name.toLowerCase() === stringtosearchfor);
+  let currentGame = steamArrayOfAppIDs.find(i => i.name.toLowerCase() === stringtosearchfor);
 
   if (currentGame == undefined) {
     console.log("no such game found");
   } else {
     let replacingUrl;
 
+    let channelIsRussian = false;
     if (tempDB[data.channel].streamInfo.broadcasterLanguage === "ru") {
+      channelIsRussian = true;
+    }
+
+    if (channelIsRussian) {
       replacingUrl = {
         CHANGEID: currentGame.appid,
         LANGUAGE: "l=russian",
@@ -268,9 +279,20 @@ async function currentGameFunction(data) {
       }
     }
 
+    let gamePrice;
+    if (!gameObj.price_overview) {
+      if (channelIsRussian) {
+        gamePrice = "Бесплатно";
+      } else {
+        gamePrice = "Free";
+      }
+    } else {
+      gamePrice = gameObj.price_overview.final/100;
+    }
+
     tempDB[data.channel].streamInfo.gameInfo = {
       game: tempDB[data.channel].streamInfo.game,
-      gamePrice: gameObj.package_groups[0].subs[0].price_in_cents_with_discount/100,
+      gamePrice: gamePrice,
       gameDescription: gameObj.short_description,
       gameLink: `https://store.steampowered.com/app/${currentGame.appid}`
     };
@@ -333,7 +355,7 @@ async function followsFunction(data) {
 
   return followsBool;
 
-};
+}
 
 async function viewersInfoFunction(data) {
 
@@ -403,6 +425,15 @@ async function viewersInfoFunction(data) {
 
 }
 
+
+
+async function callApiOnBotBoot() {
+
+  console.log("STARTING CALLING DIFFERENT API's");
+  await listOfAppIDsFuncion();
+  console.log("ALL CALLS ARE DONE");
+}
+
   
 function writeToDBFunction() {
   if (writeToDB){
@@ -452,6 +483,8 @@ function ifTimePassedFunction(seconds = 60, what, data) {
 
 //test yet again
 
+//Calls API's when launching bot.
+callApiOnBotBoot();
 
 //exports
 module.exports.recurceIt = recurceIt;
