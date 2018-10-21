@@ -162,46 +162,51 @@ let handleCalls = async (what, data) => {
 
 async function streamInfoFunction(data) {
 
-  if (ifTimePassedFunction(60, "streamInfo", data)) {
-
-    let replacingStream = {
-      bashduude: data.channel
-    };
-    url = replaceIt(apiCallCase.request.currentGame.url, replacingStream);
-
-    let streamInfoResponse = await apiCall(url);
-
-    if (!tempDB.hasOwnProperty(data.channel)) {
-      tempDB[data.channel] = {};
-      if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
-        tempDB[data.channel].streamInfo = {};
-      }
-    }
-    
-    tempDB[data.channel].streamInfo = {
-      mature: streamInfoResponse.data.mature,
-      partner: streamInfoResponse.data.partner,
-      game: streamInfoResponse.data.game,
-      status: streamInfoResponse.data.status,
-      broadcasterLanguage: streamInfoResponse.data.broadcaster_language,
-      broadcasterName: streamInfoResponse.data.display_name,
-      broadcasterID: streamInfoResponse.data._id,
-      channelCreatedAt: streamInfoResponse.data.created_at,
-      lastStreamBeen: streamInfoResponse.data.updated_at,
-      views: streamInfoResponse.data.views,
-      followers: streamInfoResponse.data.followers,
-      delay: streamInfoResponse.data.delay,
-      banner: streamInfoResponse.data.banner,
-      background: streamInfoResponse.data.background,
-      url: streamInfoResponse.data.url,
-      logo: streamInfoResponse.data.logo,
-      videoBanner: streamInfoResponse.data.video_banner,
-      profileBanner: streamInfoResponse.data.profile_banner,
-      
-    };
-    
-    writeToDBFunction();
+  if (!(ifTimePassedFunction(60, "streamInfo", data))) {
+    return;
   }
+
+  console.log(" ");
+  console.log("RECALLING streamInfoFunction");
+  console.log(" ");
+
+  let replacingStream = {
+    bashduude: data.channel
+  };
+  url = replaceIt(apiCallCase.request.currentGame.url, replacingStream);
+
+  let streamInfoResponse = await apiCall(url);
+
+  if (!tempDB.hasOwnProperty(data.channel)) {
+    tempDB[data.channel] = {};
+    if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
+      tempDB[data.channel].streamInfo = {};
+    }
+  }
+  
+  tempDB[data.channel].streamInfo = {
+    mature: streamInfoResponse.data.mature,
+    partner: streamInfoResponse.data.partner,
+    game: streamInfoResponse.data.game,
+    status: streamInfoResponse.data.status,
+    broadcasterLanguage: streamInfoResponse.data.broadcaster_language,
+    broadcasterName: streamInfoResponse.data.display_name,
+    broadcasterID: streamInfoResponse.data._id,
+    channelCreatedAt: streamInfoResponse.data.created_at,
+    lastStreamBeen: streamInfoResponse.data.updated_at,
+    views: streamInfoResponse.data.views,
+    followers: streamInfoResponse.data.followers,
+    delay: streamInfoResponse.data.delay,
+    banner: streamInfoResponse.data.banner,
+    background: streamInfoResponse.data.background,
+    url: streamInfoResponse.data.url,
+    logo: streamInfoResponse.data.logo,
+    videoBanner: streamInfoResponse.data.video_banner,
+    profileBanner: streamInfoResponse.data.profile_banner,
+    
+  };
+  
+  writeToDBFunction();
 }
 
 async function currentGameFunction(data) {
@@ -244,29 +249,33 @@ async function currentGameFunction(data) {
 
     console.log("url too look for that game object");
     console.log(url);
-    if (ifTimePassedFunction(60, "specificGameInfoResponse", data)) {
-      
-      console.log("60 СЕКУНД ПРОШЛО Я СПРАШИВАЮ ЗАНОВО ");
-      
-      let specificGameInfoResponse = await apiCall(url);
-      let gameObj = specificGameInfoResponse.data[currentGame.appid].data;
 
-      if (!tempDB.hasOwnProperty(data.channel)) {
-        tempDB[data.channel] = {};
-        if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
-          tempDB[data.channel].streamInfo = {};
-        }
-      }
-
-      tempDB[data.channel].streamInfo.gameInfo = {
-        game: tempDB[data.channel].streamInfo.game,
-        gamePrice: gameObj.package_groups[0].subs[0].price_in_cents_with_discount/100,
-        gameDescription: gameObj.short_description,
-        gameLink: `https://store.steampowered.com/app/${currentGame.appid}`
-      };
-
-      writeToDBFunction();
+    if (!(ifTimePassedFunction(60, "specificGameInfoResponse", data))) {
+      return;
     }
+  
+    console.log(" ");
+    console.log("RECALLING specificGameInfoResponse");
+    console.log(" ");
+      
+    let specificGameInfoResponse = await apiCall(url);
+    let gameObj = specificGameInfoResponse.data[currentGame.appid].data;
+
+    if (!tempDB.hasOwnProperty(data.channel)) {
+      tempDB[data.channel] = {};
+      if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
+        tempDB[data.channel].streamInfo = {};
+      }
+    }
+
+    tempDB[data.channel].streamInfo.gameInfo = {
+      game: tempDB[data.channel].streamInfo.game,
+      gamePrice: gameObj.package_groups[0].subs[0].price_in_cents_with_discount/100,
+      gameDescription: gameObj.short_description,
+      gameLink: `https://store.steampowered.com/app/${currentGame.appid}`
+    };
+
+    writeToDBFunction();
     
   }
 }
@@ -327,6 +336,14 @@ async function followsFunction(data) {
 };
 
 async function viewersInfoFunction(data) {
+
+  if (!(ifTimePassedFunction(60, "viewersInfoFunction", data))) {
+    return;
+  }
+
+  console.log(" ");
+  console.log("MAKING NEW CALL FOR viewersInfoFunction");
+  console.log(" ");
 
   let replacingStream = {
     bashduude: data.channel
