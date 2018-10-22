@@ -1,28 +1,27 @@
 /****************requiries********************/
-/**/const tmi = require("tmi.js");
-/**/const express = require("express");
-/**/const firebase = require("firebase");
+/**/const TMI = require("tmi.js");
+/**/const EXPRESS = require("express");
+/**/const FIREBASE = require("firebase");
 /**local files requiries**/
-/**/const options = require("./optionsFolder/options.js");
-/**/const apiStuff = require("./apiCall.js");
-/**/const handleTMI = require("./handleTMI.js");
+/**/const OPTIONS = require("./optionsFolder/options.js");
+/**/const HANDLETMI = require("./handleTMI.js");
 /*************************************************/
 
 //tmi connect
-const client = new tmi.client(options.twitchTMI);
+const CLIENT = new TMI.client(OPTIONS.twitchTMI);
 // Connect the client to the server..
-client.connect();
+CLIENT.connect();
 //handling all TMIjs Stuff
-handleTMI(client);
+HANDLETMI(CLIENT);
 
 //firebase database connect
-firebase.initializeApp(options.firebaseConfig);
-const firebaseDB = firebase.database();
+FIREBASE.initializeApp(OPTIONS.firebaseConfig);
+const FIREBASEDB = FIREBASE.database();
 
 //https://firebase.google.com/docs/database/web/read-and-write?authuser=0
 
 /****************command symbol********************/
-/**/const symbol = options.twitchTMI.thing;
+/**/const symbol = OPTIONS.twitchTMI.thing;
 /**/const symbolRegEx = new RegExp("^"+symbol,"g");
 /*************************************************/
 

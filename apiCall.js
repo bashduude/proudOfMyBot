@@ -1,7 +1,7 @@
-/**/const axios = require("axios");
-/**/const fs = require("fs");
-/**/const options = require("./optionsFolder/options.js");
-let tempDB = JSON.parse(fs.readFileSync('tempDB.json'));
+/**/const AXIOS = require("axios");
+/**/const FS = require("fs");
+/**/const OPTIONS = require("./optionsFolder/options.js");
+let tempDB = JSON.parse(FS.readFileSync('tempDB.json'));
 
 let viewersInfoObj,
   url,
@@ -16,11 +16,11 @@ steamArrayOfAppIDs = [];
 
 
 let apiCall = (url, path) => {
-  return axios({
+  return AXIOS({
     method: 'get',
     url: url,
     headers: {
-      'Client-ID': options.twitchTMI.clientID
+      'Client-ID': OPTIONS.twitchTMI.clientID
     }
   }).then(data => {
     let answer;
@@ -454,7 +454,7 @@ function writeToDBFunction() {
   if (writeToDB){
     // tempDB = JSON.stringify(tempDB);// most optimized, no indent
     let updateDB = JSON.stringify(tempDB, null, 2);
-    fs.writeFile('tempDB.json', updateDB, finished);
+    FS.writeFile('tempDB.json', updateDB, finished);
     function finished(data) {
       console.log("Database has been updated..");
     };

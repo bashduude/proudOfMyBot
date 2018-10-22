@@ -1,7 +1,6 @@
-/**/const apiStuff = require("./apiCall.js");
-/**/const viewersDB = require("./viewersDB.json");
+/**/const APISTUFF = require("./apiCall.js");
 /**/const commonVariables = require("./commonVariables.js");
-/**/const langFile = require("./lang.json");
+/**/const LANGFILE = require("./lang.json");
 
  
 //describes language of a user
@@ -33,11 +32,11 @@ const handleTMI = (client) => {
 
     if (username === "bashduude" && joinedChannels.indexOf(data.channel)) {
       console.log("should update db");
-      apiStuff.handleCalls("prepareNewChannelForDB", data);
+      APISTUFF.handleCalls("prepareNewChannelForDB", data);
     }
 
     (function isFollower() {
-      apiStuff.handleCalls("follows", data);
+      APISTUFF.handleCalls("follows", data);
     }());
   };
 
@@ -57,7 +56,7 @@ const handleTMI = (client) => {
         commonMessage: commonVariables.timeoutValues.valuesForBashChannel.commonMessage,
         waitingApiCallMessage: commonVariables.timeoutValues.valuesForBashChannel.waitingApiCallMessage
       };
-      lang = langFile.ru;
+      lang = LANGFILE.ru;
     } else {
       data.timeoutValues = {
         quickMessages: commonVariables.timeoutValues.valuesForOtherChannels.quickMessages,
@@ -65,9 +64,9 @@ const handleTMI = (client) => {
         waitingApiCallMessage: commonVariables.timeoutValues.valuesForOtherChannels.waitingApiCallMessage
       };
       if (client.opts.channelsLang.ru.indexOf(data.channel) == -1) {
-        lang = langFile.en;
+        lang = LANGFILE.en;
       } else {
-        lang = langFile.ru;
+        lang = LANGFILE.ru;
       }
     }
 
@@ -120,10 +119,10 @@ const handleTMI = (client) => {
     setTimeout(function(){
       client.action(data.channel, lang.thinkingResponse);
     }, timeoutValueQuick);
-    await apiStuff.handleCalls("currentGame", data);
+    await APISTUFF.handleCalls("currentGame", data);
 
-    let selectedChannel = apiStuff.tempDB[data.channel].streamInfo;
-    let currentGame = apiStuff.tempDB[data.channel].streamInfo.game;
+    let selectedChannel = APISTUFF.tempDB[data.channel].streamInfo;
+    let currentGame = APISTUFF.tempDB[data.channel].streamInfo.game;
     let currentGamePrice;
     let currentGameDesc;
     let currentGameLink;
@@ -131,9 +130,9 @@ const handleTMI = (client) => {
     if (selectedChannel.hasOwnProperty("gameInfo")) {
       console.log("inside if statement in handleTMI gameinfo");
       
-      currentGamePrice = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gamePrice;
-      currentGameDesc = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameDescription;
-      currentGameLink = apiStuff.tempDB[data.channel].streamInfo.gameInfo.gameLink;
+      currentGamePrice = APISTUFF.tempDB[data.channel].streamInfo.gameInfo.gamePrice;
+      currentGameDesc = APISTUFF.tempDB[data.channel].streamInfo.gameInfo.gameDescription;
+      currentGameLink = APISTUFF.tempDB[data.channel].streamInfo.gameInfo.gameLink;
     }
 
     if (currentGamePrice || currentGamePrice === 0) {
@@ -164,7 +163,7 @@ const handleTMI = (client) => {
     let timeoutValueCommon = data.timeoutValues.commonMessage;
     let timeoutValueQuick = data.timeoutValues.quickMessages;
     setTimeout(function(){
-      let unfollowers = apiStuff.tempDB[data.channel].viewersInfo.notFollowingArr;
+      let unfollowers = APISTUFF.tempDB[data.channel].viewersInfo.notFollowingArr;
       let message = " imGlitch " + unfollowers;
       if (unfollowers.length > 0) {
         setTimeout(function(){ client.action(data.channel, message); }, timeoutValueQuick);
@@ -184,9 +183,9 @@ const handleTMI = (client) => {
       client.action(data.channel, lang.thinkingResponse);
     }, timeoutValueCommon);
 
-    await apiStuff.handleCalls("viewersInfo", data);
+    await APISTUFF.handleCalls("viewersInfo", data);
 
-    let chatters = apiStuff.tempDB[data.channel].viewersInfo;
+    let chatters = APISTUFF.tempDB[data.channel].viewersInfo;
     setTimeout(function(){
       client.action(data.channel, lang.handleChatCommands.viewersInfoFunction[1]);
       setTimeout(function(){
