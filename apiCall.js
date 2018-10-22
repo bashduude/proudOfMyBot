@@ -35,7 +35,7 @@ let apiCall = (url, path) => {
       data: answer
     };
 
-    // console.log(successResponse);
+    // console.log(successResponse.data);
     return successResponse;
 
   }).catch(error => {
@@ -48,7 +48,6 @@ let apiCall = (url, path) => {
     return errorResponse;
   });
 };
-
 
 
 const apiCallCase = {
@@ -305,6 +304,14 @@ async function currentGameFunction(data) {
 
 async function followsFunction(data) {
 
+
+  //if already in database(not new user)
+  if (tempDB[data.channel].viewers.hasOwnProperty([data.username])) {
+    if (tempDB[data.channel].viewers[data.username].follows) {
+      return true;
+    }
+  }
+  
   console.log(`followsFunction is triggered by new user join: ${data.username}`);
 
  ///////////////////////////generating proper url/////////////////////////
@@ -322,6 +329,7 @@ async function followsFunction(data) {
   let followsFunctionResponse = await apiCall(url);
   let followsBool;
   let followDate;
+  let followGame;
   if (followsFunctionResponse.type === "error") {
     followsBool = false;
   } else if (followsFunctionResponse.type === "success") {
@@ -343,7 +351,10 @@ async function followsFunction(data) {
   let followAgeInDays = 0;
   if (followsBool) {
     // days past since user followed the stream
-    followAgeInDays = Math.floor((Date.now() - Date.parse(followDate))/86400000);
+    followAgeInDays = Math.floor((Date.now() 
+    - Date.parse(followDate))/86400000);
+    //which game i was playing when follow occur?
+    followGame = tempDB[data.channel].streamInfo.game;    
   }
 
   tempDB[data.channel].viewers[data.username] = {
@@ -351,7 +362,8 @@ async function followsFunction(data) {
     follows: followsBool,
     lastSeen: new Date(),
     followDate: followDate,
-    followAgeInDays: followAgeInDays
+    followAgeInDays: followAgeInDays,
+    followGame: followGame
   };
 
   writeToDBFunction();
