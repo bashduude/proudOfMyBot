@@ -18,6 +18,12 @@
         "4": " imGlitch Краткое описание: ",
         "5": " imGlitch Ссылка в Стим: "
       }
+    },
+    "handleWhisperMessages": {
+      "case": {
+        "no": "Нет",
+        "yes": "Да"
+      }
     }
   },
   "en": {
@@ -38,6 +44,13 @@
         "3": "$ ",
         "4": " imGlitch Short description: ",
         "5": " imGlitch Steam link: "
+      }
+    },
+    "handleWhisperMessages": {
+      "titled": "I've noticed You have typed \"secret message\" in the chat :) Do You want to pass the quiz?",
+      "case": {
+        "no": "No",
+        "yes": "Yes"
       }
     }
   }

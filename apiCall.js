@@ -12,6 +12,7 @@ let viewersInfoObj,
   lastTime = {},
   //if writeToDB is "true" - database file will be updated
   writeToDB = true,
+  callApiOnBotBoot = true,
 steamArrayOfAppIDs = [];
 
 
@@ -49,7 +50,6 @@ let apiCall = (url, path) => {
   });
 };
 
-
 const apiCallCase = {
   request: {
     streams: {
@@ -78,6 +78,9 @@ const apiCallCase = {
     },
     follows: { //returns object if follows, else request will fail
       url: "https://api.twitch.tv/kraken/users/blank/follows/channels/bashduude"
+    },
+    users: { //shor user info describing if user is verified bot and stuff
+      url: "https://api.twitch.tv/kraken/users/39141793/chat?api_version=5"
     },
     currentViewers: {
       url: "http://tmi.twitch.tv/group/user/bashduude/chatters"
@@ -153,10 +156,19 @@ let handleCalls = async (what, data) => {
     case "currentGame":
       await currentGameFunction(data);
       break;
-    case "prepareNewChannelForDB":
+    case "prepareChannelForDB":
       createFoldersInDataBaseForCurrentUserFunction(data);
       break;
+    case "streamInfo":
+      return await streamInfoFunction(data);
+      // break;
     default:
+      console.log("[apiCall.js][handleCalls()]\
+       Went into \"default\" in switch");
+      console.log(`Because of this request: ${what}`);
+      console.log(" ");
+      
+      
   }
 
 
@@ -176,9 +188,7 @@ async function streamInfoFunction(data) {
     return;
   }
 
-  console.log(" ");
-  console.log("RECALLING streamInfoFunction");
-  console.log(" ");
+  console.log("[apiCall.js][streamInfoFunction()] RECALLING streamInfoFunction!") 
 
   let replacingStream = {
     bashduude: data.channel
@@ -187,12 +197,12 @@ async function streamInfoFunction(data) {
 
   let streamInfoResponse = await apiCall(url);
 
-  if (!tempDB.hasOwnProperty(data.channel)) {
-    tempDB[data.channel] = {};
-    if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
-      tempDB[data.channel].streamInfo = {};
-    }
-  }
+  // if (!tempDB.hasOwnProperty(data.channel)) {
+  //   tempDB[data.channel] = {};
+  //   if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
+  //     tempDB[data.channel].streamInfo = {};
+  //   }
+  // }
   
   tempDB[data.channel].streamInfo = {
     mature: streamInfoResponse.data.mature,
@@ -216,7 +226,20 @@ async function streamInfoFunction(data) {
     
   };
   
-  writeToDBFunction();
+  writeToDBFunction(); 
+
+  let streamerData = {
+    channel: streamInfoResponse.data.display_name,
+    language: streamInfoResponse.data.broadcaster_language
+  };
+
+  if (streamerData.language == "ru") {
+    streamerData.channelIsRussian = true;
+  } else {
+    streamerData.channelIsRussian = false;
+  }
+
+  return streamerData;
 }
 
 async function currentGameFunction(data) {
@@ -231,6 +254,15 @@ async function currentGameFunction(data) {
   }
 
   let currentGame = steamArrayOfAppIDs.find(i => i.name.toLowerCase() === stringtosearchfor);
+
+  let multipleOccasions = steamArrayOfAppIDs.filter(i => i.name.toLowerCase() === stringtosearchfor);
+
+  console.log(multipleOccasions);
+  if (multipleOccasions.length == 0) {
+    console.log("массив пуст, бро");
+    
+  }
+  
 
   if (currentGame == undefined) {
     console.log("no such game found");
@@ -422,16 +454,22 @@ async function viewersInfoFunction(data) {
 
     let followsFunctionResponse = await followsFunction(info);
 
+    console.log("currently checking: " + info.username);
+    console.log("does he follow the stream? " + followsFunctionResponse);
+    
+
     //forbiddenNames is basically bots
-    let forbiddenNames = ["logviewer", "hnlbot", "p0sitivitybot", "skinnyseahorse", "slocool", "apricotdrupefruit", "commanderroot", "lanfusion", "electricallongboard", "philderbeast", "stay_hydrated_bot", "whitethumb"];
+    let forbiddenNames = ["logviewer", "hnlbot", "p0sitivitybot", "skinnyseahorse", "slocool", "apricotdrupefruit", "commanderroot", "lanfusion", "electricallongboard", "philderbeast", "stay_hydrated_bot", "whitethumb", "streamchat_tmnt", "bananennanen", "avocadobadado", "electricalskateboard"];
 
     //if user not follows the stream modify the object
     //doesn't count known bots and channel owners
-    if (followsFunctionResponse.type === false) {
-      if (forbiddenNames.indexOf(data.username) == -1) {
-        if (data.channel != data.username) {
-          viewersInfoObj.notFollowing++;
-          viewersInfoObj.notFollowingArr.push(data.username);
+    if (followsFunctionResponse === false) {
+      console.log("попал в Иф: " + info.username);
+      console.log("фолловит?: " + followsFunctionResponse);
+      if (forbiddenNames.indexOf(info.username) == -1) {
+        if (data.channel != info.username) {
+          tempDB[data.channel].viewersInfo.notFollowing++;
+          tempDB[data.channel].viewersInfo.notFollowingArr.push(info.username);
         }
       }
     }
@@ -441,9 +479,8 @@ async function viewersInfoFunction(data) {
 }
 
 
-
-async function callApiOnBotBoot() {
-
+//Calls API's when launching bot.
+async function callApiOnBotBootFunction() {
   console.log("STARTING CALLING DIFFERENT API's");
   await listOfAppIDsFuncion();
   console.log("ALL CALLS ARE DONE");
@@ -462,19 +499,13 @@ function writeToDBFunction() {
 }
 
 function createFoldersInDataBaseForCurrentUserFunction(data) {
-  console.log("trying to prepare for DB");
-  if (!tempDB.hasOwnProperty(data.channel)) {
-    tempDB[data.channel] = {};
-    if (!tempDB.hasOwnProperty(data.channel.viewers)) {
-      tempDB[data.channel].viewers = {};
-    }
-    if (!tempDB.hasOwnProperty(data.channel.viewersInfo)) {
-      tempDB[data.channel].viewersInfo = {};
-    }
-    if (!tempDB.hasOwnProperty(data.channel.streamInfo)) {
-      tempDB[data.channel].streamInfo = {};
-    }
-  }
+  console.log("Preparing user for DB");
+
+  tempDB[data.channel] = tempDB[data.channel] || {};
+  tempDB[data.channel].viewers = tempDB[data.channel].viewers || {};
+  tempDB[data.channel].viewersInfo = tempDB[data.channel].viewersInfo || {};
+  tempDB[data.channel].streamInfo = tempDB[data.channel].streamInfo || {};
+
   writeToDBFunction();
 }
 
@@ -498,8 +529,6 @@ function ifTimePassedFunction(seconds = 60, what, data) {
 
 //test yet again
 
-//Calls API's when launching bot.
-callApiOnBotBoot();
 
 //exports
 module.exports.recurceIt = recurceIt;
@@ -507,3 +536,4 @@ module.exports.apiCallCase = apiCallCase;
 module.exports.apiCall = apiCall;
 module.exports.handleCalls = handleCalls;
 module.exports.tempDB = tempDB;
+module.exports.callApiOnBotBootFunction = callApiOnBotBootFunction;

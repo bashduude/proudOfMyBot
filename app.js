@@ -3,6 +3,7 @@
 /**/const EXPRESS = require("express");
 /**/const FIREBASE = require("firebase");
 /**/const BODYPARSER = require("body-parser");
+/**/const FS = require("fs");
 /**local files requiries**/
 /**/const OPTIONS = require("./optionsFolder/options.js");
 /**/const HANDLETMI = require("./handleTMI.js");
@@ -15,7 +16,7 @@ const CLIENT = new TMI.client(OPTIONS.twitchTMI);
 // Connect the client to the server..
 CLIENT.connect();
 //handling all TMI.js Stuff
-HANDLETMI(CLIENT);
+let tmiForWeb = HANDLETMI(CLIENT);
 /*************************************************/
 
 /*********firebase database connect************/
@@ -58,6 +59,39 @@ APP.post('/webhooks', JSONPARSER, (req, res) => {
 	return res.json({
 		success: true,
 		message: "RECIEVED DATA ON BACKEND"
+	});
+});
+
+APP.post('/shrug', JSONPARSER, (req, res) => {
+	console.log("Поступил пост в /shrug");
+	
+	console.log(req.body);
+	// setTimeout(function(){ CLIENT.say("bashduude", "Test Message From Website"); }, 50);
+	// tmiForWeb.shrugTest();
+
+
+
+	// switch (command) {
+	// 	case "shrug":
+			
+	// 		break;
+	
+	// 	default:
+	// 		break;
+	// }
+
+	let messageData = {
+		channel: "bashduude",
+		timeoutValues: {
+			commonMessage: 1000
+		}
+	};
+
+	tmiForWeb.shrugFunction(messageData);
+
+	return res.json({
+		success: true,
+		message: "Shrug Was Posted in Chat"
 	});
 });
 

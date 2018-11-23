@@ -1,0 +1,22 @@
+[
+  {
+    "channel": "bashduude",
+    "language": "ru",
+    "channelIsRussian": true,
+    "timeoutValues": {
+      "quickMessages": 500,
+      "commonMessage": 1200,
+      "waitingApiCallMessage": 5500
+    }
+  },
+  {
+    "channel": "BennySLK",
+    "language": "ru",
+    "channelIsRussian": true,
+    "timeoutValues": {
+      "quickMessages": 1200,
+      "commonMessage": 1500,
+      "waitingApiCallMessage": 5500
+    }
+  }
+]

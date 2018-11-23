@@ -1,0 +1,29 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+html {
+	font-family: Poppins;
+}
+
+body {
+	width: 100%;
+	background: #0E0E0E;
+}
+
+#loginPage {
+	width: 100%;
+	height: 100%;
+	background-image: url("loginPage.png");
+}
+
+#wrapper {
+	width: 80%;
+	margin: 0 auto;
+}
+
+span {
+	font-size: 2em;
+	color: aliceblue;
+}
